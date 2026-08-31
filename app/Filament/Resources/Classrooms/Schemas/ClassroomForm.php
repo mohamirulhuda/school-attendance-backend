@@ -14,7 +14,8 @@ class ClassroomForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->required(),
+                    ->required()
+                    ->maxLength(100),
 
                 Select::make('grade')
                     ->options([
@@ -25,7 +26,8 @@ class ClassroomForm
                     ->required(),
 
                 TextInput::make('major')
-                    ->required(),
+                    ->required()
+                    ->maxLength(50),
 
                 Toggle::make('is_active')
                     ->default(true),
