@@ -19,6 +19,8 @@ class Teacher extends Model
         'gender',
         'title_prefix',
         'title_suffix',
+        'email',
+        'phone',
         'address',
         'is_active',
     ];
