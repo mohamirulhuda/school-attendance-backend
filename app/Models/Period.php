@@ -11,9 +11,10 @@ class Period extends Model
     use HasPublicId;
 
     protected $fillable = [
+        'number',
         'name',
-        'start_time',
-        'end_time',
+        'starts_at',
+        'ends_at',
         'is_active',
     ];
 
