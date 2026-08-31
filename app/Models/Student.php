@@ -19,7 +19,6 @@ class Student extends Model
         'gender',
         'birth_place',
         'birth_date',
-        'address',
         'is_active',
     ];
 
