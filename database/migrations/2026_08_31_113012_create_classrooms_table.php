@@ -18,7 +18,7 @@ return new class extends Migration
 
             $table->string('name', 100);
             $table->unsignedTinyInteger('grade');
-            $table->string('major', 50);
+            $table->string('major', 50)->nullable();
 
             $table->boolean('is_active')->default(true);
 
