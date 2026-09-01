@@ -20,6 +20,7 @@ class SubjectSeeder extends Seeder
             ['code' => 'BIN', 'name' => 'Bahasa Indonesia'],
             ['code' => 'EKO', 'name' => 'Ekonomi'],
             ['code' => 'SEJ', 'name' => 'Sejarah'],
+            ['code' => 'GEO', 'name' => 'Geografi'],
             ['code' => 'SOS', 'name' => 'Sosiologi'],
             ['code' => 'PKN', 'name' => 'Pendidikan Pancasila dan Kewarganegaraan'],
             ['code' => 'FIS', 'name' => 'Fisika'],
