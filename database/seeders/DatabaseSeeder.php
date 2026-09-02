@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory()->create([
+        $devAdmin = User::factory()->create([
             'name' => 'Dev Admin',
             'email' => 'dev@example.com',
         ]);
@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             EnrollmentSeeder::class,
             LearningGroupStudentSeeder::class,
             ScheduleSeeder::class,
+            RolePermissionSeeder::class,
         ]);
+
+        $devAdmin->assignRole('admin');
     }
 }
