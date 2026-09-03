@@ -3,8 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\Teacher;
-use App\Models\User;
+use App\Services\Auth\GoogleAuthenticationService;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -15,30 +14,11 @@ class GoogleAuthController extends Controller
         return Socialite::driver('google')->redirect();
     }
 
-    public function callback()
+    public function callback(GoogleAuthenticationService $authenticationService)
     {
         $googleUser = Socialite::driver('google')->user();
 
-        $teacher = Teacher::query()
-            ->where('email', $googleUser->getEmail())
-            ->firstOrFail();
-
-        $user = User::query()->firstOrCreate(
-            [
-                'email' => $teacher->email,
-            ],
-            [
-                'name' => $teacher->name,
-            ],
-        );
-
-        if ($user->wasRecentlyCreated) {
-            $user->assignRole('guru_mapel');
-        }
-
-        Auth::login($user, true);
-
-        request()->session()->regenerate();
+        $user = $authenticationService->authenticate($googleUser);
 
         return response()->json([
             'authenticated' => Auth::check(),
