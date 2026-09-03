@@ -17,6 +17,11 @@ class DatabaseSeeder extends Seeder
             'email' => 'dev@example.com',
         ]);
 
+        $devUser = User::factory()->create([
+            'name' => 'MA Sunan Ampel Pare',
+            'email' => 'pare.masunanampel@gmail.com',
+        ]);
+
         $this->call([
             AcademicPeriodSeeder::class,
             PeriodSeeder::class,
@@ -32,5 +37,6 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $devAdmin->assignRole('admin');
+        $devUser->assignRole('admin');
     }
 }
