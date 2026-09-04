@@ -20,14 +20,34 @@ return new class extends Migration
                 ->constrained('schedules')
                 ->restrictOnDelete();
 
+            $table->foreignId('teacher_id_snapshot')
+                ->constrained('teachers')
+                ->restrictOnDelete();
+
+            $table->foreignId('subject_id_snapshot')
+                ->constrained('subjects')
+                ->restrictOnDelete();
+
+            $table->foreignId('learning_group_id_snapshot')
+                ->constrained('learning_groups')
+                ->restrictOnDelete();
+
+            $table->foreignId('period_id_snapshot')
+                ->constrained('periods')
+                ->restrictOnDelete();
+
             $table->date('date');
 
             $table->string('status', 20)->default('draft');
 
             $table->timestamp('opened_at')->nullable();
-            $table->timestamp('submitted_at')->nullable();
 
-            $table->timestamps();
+            $table->foreignId('finalized_by')
+                ->nullable()
+                ->constrained('users')
+                ->restrictOnDelete();
+
+            $table->timestamp('finalized_at')->nullable();
 
             $table->unique(
                 ['schedule_id', 'date'],
