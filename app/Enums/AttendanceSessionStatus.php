@@ -4,6 +4,6 @@ namespace App\Enums;
 
 enum AttendanceSessionStatus: string
 {
-    case Open = 'open';
-    case Submitted = 'submitted';
+    case Draft = 'draft';
+    case Finalized = 'finalized';
 }

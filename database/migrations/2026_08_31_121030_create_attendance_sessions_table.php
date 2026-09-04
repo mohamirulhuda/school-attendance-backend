@@ -22,7 +22,7 @@ return new class extends Migration
 
             $table->date('date');
 
-            $table->string('status', 20)->default('open');
+            $table->string('status', 20)->default('draft');
 
             $table->timestamp('opened_at')->nullable();
             $table->timestamp('submitted_at')->nullable();
