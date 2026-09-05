@@ -9,16 +9,27 @@ use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 
 function createAttendanceTestData(): array
 {
-    $user = User::factory()->create();
+    Role::firstOrCreate([
+        'name' => 'guru_mapel',
+        'guard_name' => 'web',
+    ]);
 
     $teacher = Teacher::create([
         'name' => 'Test Teacher',
+        'email' => 'test.teacher@example.com',
         'gender' => 'L',
         'is_active' => true,
     ]);
+
+    $user = User::factory()->create([
+        'email' => $teacher->email,
+    ]);
+
+    $user->assignRole('guru_mapel');
 
     $subject = Subject::create([
         'code' => 'TEST',

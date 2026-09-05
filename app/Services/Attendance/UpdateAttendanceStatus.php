@@ -2,13 +2,12 @@
 
 namespace App\Services\Attendance;
 
-use App\Enums\AttendanceSessionStatus;
 use App\Enums\AttendanceStatus;
 use App\Models\AttendanceRecord;
 use App\Models\AuditLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Gate;
 
 class UpdateAttendanceStatus
 {
@@ -27,14 +26,16 @@ class UpdateAttendanceStatus
                 ->lockForUpdate()
                 ->findOrFail($attendanceRecordId);
 
-            if (
-                $record->attendanceSession->status !==
-                AttendanceSessionStatus::Draft
-            ) {
-                throw ValidationException::withMessages([
-                    'attendance_record' => 'Attendance record cannot be updated after the session is finalized.',
-                ]);
-            }
+            Gate::authorize('update', $record->attendanceSession);
+
+//            if (
+//                $record->attendanceSession->status !==
+//                AttendanceSessionStatus::Draft
+//            ) {
+//                throw ValidationException::withMessages([
+//                    'attendance_record' => 'Attendance record cannot be updated after the session is finalized.',
+//                ]);
+//            }
 
             $oldValues = [
                 'status' => $record->status->value,
