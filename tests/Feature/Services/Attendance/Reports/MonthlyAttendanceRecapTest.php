@@ -4,7 +4,6 @@ use App\Enums\AttendanceSessionStatus;
 use App\Enums\AttendanceStatus;
 use App\Models\AttendanceRecord;
 use App\Models\AttendanceSession;
-use App\Models\AuditLog;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Services\Attendance\Reports\MonthlyAttendanceRecap;
