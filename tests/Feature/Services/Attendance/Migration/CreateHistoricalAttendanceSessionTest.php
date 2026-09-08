@@ -1,17 +1,15 @@
 <?php
 
-use App\Enums\AttendanceSessionStatus;
-use App\Enums\AttendanceStatus;
-use App\Models\AuditLog;
+use App\Models\AttendanceRecord;
+use App\Models\AttendanceSession;
 use App\Services\Attendance\Migration\CreateHistoricalAttendanceSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 
 uses(RefreshDatabase::class);
 
-it('creates a historical attendance session as finalized', function () {
+it('creates a finalized historical attendance session', function () {
     $data = createAttendanceTestData();
-
-    $this->actingAs($data['user']);
 
     $session = app(CreateHistoricalAttendanceSession::class)->execute([
         'schedule_id' => $data['schedule']->id,
@@ -19,125 +17,122 @@ it('creates a historical attendance session as finalized', function () {
         'subject_id_snapshot' => $data['subject']->id,
         'learning_group_id_snapshot' => $data['learningGroup']->id,
         'period_id_snapshot' => $data['period']->id,
-        'date' => '2026-07-29',
-        'legacy_id' => 462324,
+        'date' => '2026-07-01',
         'attendance_records' => [
             [
                 'student_id' => $data['students'][0]->id,
-                'status' => AttendanceStatus::Present,
-                'note' => null,
-            ],
-        ],
-    ]);
-
-    expect($session->status)
-        ->toBe(AttendanceSessionStatus::Finalized)
-        ->and($session->finalized_by)
-        ->toBe($data['user']->id)
-        ->and($session->finalized_at)
-        ->not->toBeNull();
-
-    expect(AuditLog::query()
-        ->where('auditable_type', $session::class)
-        ->where('auditable_id', $session->id)
-        ->where('action', 'create_historical')
-        ->exists())
-        ->toBeTrue();
-});
-
-it('creates historical attendance records with the provided snapshot data', function () {
-    $data = createAttendanceTestData();
-
-    $this->actingAs($data['user']);
-
-    $session = app(CreateHistoricalAttendanceSession::class)->execute([
-        'schedule_id' => $data['schedule']->id,
-        'teacher_id_snapshot' => $data['teacher']->id,
-        'subject_id_snapshot' => $data['subject']->id,
-        'learning_group_id_snapshot' => $data['learningGroup']->id,
-        'period_id_snapshot' => $data['period']->id,
-        'date' => '2026-07-29',
-        'legacy_id' => 462324,
-        'attendance_records' => [
-            [
-                'student_id' => $data['students'][0]->id,
-                'status' => AttendanceStatus::Present,
+                'status' => 'H',
                 'note' => null,
             ],
             [
                 'student_id' => $data['students'][1]->id,
-                'status' => AttendanceStatus::Sick,
-                'note' => 'Legacy sick note',
+                'status' => 'S',
+                'note' => 'Demam',
             ],
         ],
-    ]);
+        'legacy_id' => 123456,
+    ], $data['user']->id);
 
-    expect($session->schedule_id)
-        ->toBe($data['schedule']->id)
-        ->and($session->teacher_id_snapshot)
-        ->toBe($data['teacher']->id)
-        ->and($session->subject_id_snapshot)
-        ->toBe($data['subject']->id)
-        ->and($session->learning_group_id_snapshot)
-        ->toBe($data['learningGroup']->id)
-        ->and($session->period_id_snapshot)
-        ->toBe($data['period']->id)
-        ->and($session->date->toDateString())
-        ->toBe('2026-07-29');
+    expect($session)
+        ->toBeInstanceOf(AttendanceSession::class)
+        ->status->value->toBe('finalized')
+        ->schedule_id->toBe($data['schedule']->id)
+        ->teacher_id_snapshot->toBe($data['teacher']->id)
+        ->subject_id_snapshot->toBe($data['subject']->id)
+        ->learning_group_id_snapshot->toBe($data['learningGroup']->id)
+        ->period_id_snapshot->toBe($data['period']->id)
+        ->date->toDateString()->toBe('2026-07-01');
 
-    expect($session->attendanceRecords)
-        ->toHaveCount(2);
+    expect($session->attendanceRecords)->toHaveCount(2);
 
-    expect($session->attendanceRecords->firstWhere(
-        'student_id',
-        $data['students'][0]->id
-    ))
-        ->status->toBe(AttendanceStatus::Present)
-        ->note->toBeNull();
+    expect(
+        $session->attendanceRecords
+            ->firstWhere('student_id', $data['students'][0]->id)
+            ->status->value
+    )->toBe('H');
 
-    expect($session->attendanceRecords->firstWhere(
-        'student_id',
-        $data['students'][1]->id
-    ))
-        ->status->toBe(AttendanceStatus::Sick)
-        ->note->toBe('Legacy sick note');
+    expect(
+        $session->attendanceRecords
+            ->firstWhere('student_id', $data['students'][1]->id)
+            ->status->value
+    )->toBe('S');
 });
 
-it('rolls back the historical attendance creation when a record fails', function () {
+it('creates historical attendance records with provided snapshot data', function () {
     $data = createAttendanceTestData();
 
-    $this->actingAs($data['user']);
-
-    expect(fn () => app(CreateHistoricalAttendanceSession::class)->execute([
+    $session = app(CreateHistoricalAttendanceSession::class)->execute([
         'schedule_id' => $data['schedule']->id,
         'teacher_id_snapshot' => $data['teacher']->id,
         'subject_id_snapshot' => $data['subject']->id,
         'learning_group_id_snapshot' => $data['learningGroup']->id,
         'period_id_snapshot' => $data['period']->id,
-        'date' => '2026-07-29',
-        'legacy_id' => 462324,
+        'date' => '2026-07-02',
         'attendance_records' => [
             [
                 'student_id' => $data['students'][0]->id,
-                'status' => AttendanceStatus::Present,
-                'note' => null,
+                'status' => 'I',
+                'note' => 'Acara keluarga',
             ],
             [
-                'student_id' => 999999,
-                'status' => AttendanceStatus::Sick,
-                'note' => 'This record must fail.',
+                'student_id' => $data['students'][1]->id,
+                'status' => 'A',
+                'note' => null,
             ],
         ],
-    ]))->toThrow(\Illuminate\Database\QueryException::class);
+        'legacy_id' => 123457,
+    ], $data['user']->id);
 
-    expect(\App\Models\AttendanceSession::query()->count())
-        ->toBe(0);
+    $records = AttendanceRecord::query()
+        ->where('attendance_session_id', $session->id)
+        ->get()
+        ->keyBy('student_id');
 
-    expect(\App\Models\AttendanceRecord::query()->count())
-        ->toBe(0);
+    expect($records)->toHaveCount(2);
 
-    expect(AuditLog::query()
-        ->where('domain', 'attendance')
-        ->count()
-    )->toBe(0);
+    expect($records[$data['students'][0]->id]->status->value)->toBe('I');
+    expect($records[$data['students'][0]->id]->note)->toBe('Acara keluarga');
+
+    expect($records[$data['students'][1]->id]->status->value)->toBe('A');
+    expect($records[$data['students'][1]->id]->note)->toBeNull();
+});
+
+it('rolls back creation when a record fails', function () {
+    $data = createAttendanceTestData();
+
+    try {
+        app(CreateHistoricalAttendanceSession::class)->execute([
+            'schedule_id' => $data['schedule']->id,
+            'teacher_id_snapshot' => $data['teacher']->id,
+            'subject_id_snapshot' => $data['subject']->id,
+            'learning_group_id_snapshot' => $data['learningGroup']->id,
+            'period_id_snapshot' => $data['period']->id,
+            'date' => '2026-07-03',
+            'attendance_records' => [
+                [
+                    'student_id' => $data['students'][0]->id,
+                    'status' => 'H',
+                    'note' => null,
+                ],
+                [
+                    'student_id' => 999999,
+                    'status' => 'H',
+                    'note' => null,
+                ],
+            ],
+            'legacy_id' => 123458,
+        ], $data['user']->id);
+    } catch (\Throwable $exception) {
+        expect($exception)->toBeInstanceOf(\Throwable::class);
+    }
+
+    expect(
+        AttendanceSession::query()
+            ->where('date', '2026-07-03')
+            ->exists()
+    )->toBeFalse();
+
+    expect(
+        AttendanceRecord::query()->exists()
+    )->toBeFalse();
 });

@@ -5,9 +5,7 @@ namespace App\Services\Attendance\Migration;
 use App\Enums\AttendanceSessionStatus;
 use App\Models\AttendanceSession;
 use App\Models\AuditLog;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 
 class CreateHistoricalAttendanceSession
 {
@@ -29,16 +27,8 @@ class CreateHistoricalAttendanceSession
      *     legacy_id:int|string|null
      * } $data
      */
-    public function execute(array $data): AttendanceSession
+    public function execute(array $data, int $userId): AttendanceSession
     {
-        $userId = Auth::id();
-
-        if ($userId === null) {
-            throw new InvalidArgumentException(
-                'An authenticated user is required to create historical attendance.'
-            );
-        }
-
         return DB::transaction(function () use ($data, $userId) {
             $session = AttendanceSession::query()->create([
                 'schedule_id' => $data['schedule_id'],
