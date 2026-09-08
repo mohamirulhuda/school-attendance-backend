@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\AttendanceStatus;
+use App\Models\LearningGroup;
 use App\Models\Period;
 use App\Services\Attendance\Migration\MigrationResult;
 use App\Services\Attendance\Migration\MigrationResultBuilder;
@@ -236,4 +237,57 @@ it('builds a skip migration result for an unmapped schedule', function () {
 
     expect($row->attendanceRecords)
         ->toHaveCount(2);
+});
+
+it('normalizes legacy learning group levels from numeric to roman numerals', function () {
+    $data = createAttendanceTestData();
+
+    $learningGroups = [
+        '10 C' => 'X C',
+        '11 C' => 'XI C',
+        '12 C' => 'XII C',
+    ];
+
+    foreach (array_values($learningGroups) as $name) {
+        LearningGroup::create([
+            'academic_period_id' => $data['academicPeriod']->id,
+            'name' => $name,
+            'code' => str_replace(' ', '-', $name),
+            'is_active' => true,
+        ]);
+    }
+
+    $legacyId = 999001;
+
+    foreach ($learningGroups as $index => $pair) {
+        [$legacyName, $expectedName] = $pair;
+
+        $legacy = [
+            'source' => [
+                'learning_group' => $legacyName,
+            ],
+            'rows' => [
+                [
+                    'legacy_id' => $legacyId++,
+                    'timestamp' => '2026-07-21 07:00:00',
+                    'email' => $data['teacher']->email,
+                    'teacher' => $data['teacher']->name,
+                    'date' => '2026-07-21',
+                    'jam_ke' => '1 - 2',
+                    'students' => [
+                        $data['students'][0]->name => 'Hadir',
+                    ],
+                ],
+            ],
+        ];
+
+        $result = app(MigrationResultBuilder::class)->build($legacy);
+
+        expect($result->rows->first()->attendanceSession['learning_group_id_snapshot'])
+            ->toBe(
+                LearningGroup::query()
+                    ->where('name', $expectedName)
+                    ->value('id')
+            );
+    }
 });

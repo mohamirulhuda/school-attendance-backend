@@ -185,9 +185,13 @@ class MigrationResultBuilder
             return null;
         }
 
-        $name = preg_replace(
-            '/^10(?=\s)/',
-            'X',
+        $name = preg_replace_callback(
+            '/^(10|11|12)(?=\s)/',
+            fn (array $matches): string => match ($matches[1]) {
+                '10' => 'X',
+                '11' => 'XI',
+                '12' => 'XII',
+            },
             trim($legacyLearningGroup),
         );
 
