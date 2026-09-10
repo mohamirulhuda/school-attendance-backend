@@ -29,6 +29,11 @@ class AcademicPeriod extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
     public function learningGroups(): HasMany
     {
         return $this->hasMany(LearningGroup::class);
