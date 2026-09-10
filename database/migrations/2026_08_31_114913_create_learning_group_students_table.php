@@ -31,6 +31,8 @@ return new class extends Migration
 
             $table->index(['learning_group_id', 'student_id']);
             $table->index(['student_id', 'starts_at', 'ends_at']);
+
+            $table->softDeletes();
         });
     }
 

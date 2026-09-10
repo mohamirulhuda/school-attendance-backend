@@ -26,6 +26,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['grade', 'major']);
+            $table->unique(['grade', 'name'], 'classrooms_grade_name_unique');
         });
     }
 

@@ -38,28 +38,11 @@ return new class extends Migration
 
             $table->unsignedTinyInteger('day_of_week');
 
+            $table->boolean('is_active')->default(true);
+
+            $table->softDeletes();
+
             $table->timestamps();
-
-            $table->unique(
-                [
-                    'academic_period_id',
-                    'learning_group_id',
-                    'period_id',
-                    'day_of_week',
-                ],
-                'schedule_group_period_day_unique'
-            );
-
-
-            $table->unique(
-                [
-                    'academic_period_id',
-                    'teacher_id',
-                    'period_id',
-                    'day_of_week',
-                ],
-                'schedule_teacher_period_day_unique'
-            );
 
             $table->index([
                 'academic_period_id',
