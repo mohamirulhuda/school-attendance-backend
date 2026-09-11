@@ -21,8 +21,14 @@ class Classroom extends Model
     protected function casts(): array
     {
         return [
+            'grade' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
     }
 
     public function enrollments(): HasMany

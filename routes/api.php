@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AcademicPeriodController;
+use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\PeriodController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use Illuminate\Support\Facades\Route;
