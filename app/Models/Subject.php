@@ -11,17 +11,16 @@ class Subject extends Model
 {
     use HasPublicId, SoftDeletes;
 
-    protected $fillable = [
-        'code',
-        'name',
-        'is_active',
-    ];
+    protected $fillable = ['code', 'name', 'is_active'];
 
     protected function casts(): array
     {
-        return [
-            'is_active' => 'boolean',
-        ];
+        return ['is_active' => 'boolean'];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
     }
 
     public function schedules(): HasMany

@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\LearningGroupController;
 use App\Http\Controllers\Api\LearningGroupStudentController;
 use App\Http\Controllers\Api\PeriodController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use Illuminate\Support\Facades\Route;
@@ -73,5 +74,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show']);
     Route::post('/enrollments', [EnrollmentController::class, 'store']);
     Route::match(['put', 'patch'], '/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
+
+    Route::get('/subjects', [SubjectController::class, 'index']);
+    Route::get('/subjects/{subject}', [SubjectController::class, 'show']);
+    Route::post('/subjects', [SubjectController::class, 'store']);
+    Route::match(['put', 'patch'], '/subjects/{subject}', [SubjectController::class, 'update']);
+    Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
 
 });
