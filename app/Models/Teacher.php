@@ -33,6 +33,11 @@ class Teacher extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
     public function schedules(): HasMany
     {
         return $this->hasMany(Schedule::class);
