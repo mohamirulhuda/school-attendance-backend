@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\PeriodController;
 use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\LearningGroupController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use Illuminate\Support\Facades\Route;
 
@@ -54,5 +55,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/students/{student}', [StudentController::class, 'show']);
     Route::post('/students', [StudentController::class, 'store']);
     Route::match(['put', 'patch'], '/students/{student}', [StudentController::class, 'update']);
+
+    Route::get('/learning-groups', [LearningGroupController::class, 'index']);
+    Route::get('/learning-groups/{learningGroup}', [LearningGroupController::class, 'show']);
+    Route::post('/learning-groups', [LearningGroupController::class, 'store']);
+    Route::match(['put', 'patch'], '/learning-groups/{learningGroup}', [LearningGroupController::class, 'update']);
+    Route::get('/learning-groups/{learningGroup}/memberships', [LearningGroupController::class, 'memberships']);
+    Route::delete('/learning-groups/{learningGroup}', [LearningGroupController::class, 'destroy']);
 
 });

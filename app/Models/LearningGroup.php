@@ -27,6 +27,11 @@ class LearningGroup extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
     public function academicPeriod(): BelongsTo
     {
         return $this->belongsTo(AcademicPeriod::class);
