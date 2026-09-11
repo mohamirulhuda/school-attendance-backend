@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\EnrollmentController;
 use App\Http\Controllers\Api\LearningGroupController;
 use App\Http\Controllers\Api\LearningGroupStudentController;
 use App\Http\Controllers\Api\PeriodController;
+use App\Http\Controllers\Api\ScheduleController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\TeacherController;
@@ -80,5 +81,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/subjects', [SubjectController::class, 'store']);
     Route::match(['put', 'patch'], '/subjects/{subject}', [SubjectController::class, 'update']);
     Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy']);
+
+    Route::get('/schedules', [ScheduleController::class, 'index']);
+    Route::get('/schedules/{schedule}', [ScheduleController::class, 'show']);
+    Route::post('/schedules', [ScheduleController::class, 'store']);
+    Route::match(['put', 'patch'], '/schedules/{schedule}', [ScheduleController::class, 'update']);
+    Route::delete('/schedules/{schedule}', [ScheduleController::class, 'destroy']);
 
 });
