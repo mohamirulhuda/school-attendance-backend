@@ -10,20 +10,16 @@ class Enrollment extends Model
 {
     use HasPublicId;
 
-    protected $fillable = [
-        'academic_period_id',
-        'student_id',
-        'classroom_id',
-        'starts_at',
-        'ends_at',
-    ];
+    protected $fillable = ['academic_period_id', 'student_id', 'classroom_id', 'starts_at', 'ends_at'];
 
     protected function casts(): array
     {
-        return [
-            'starts_at' => 'date',
-            'ends_at' => 'date',
-        ];
+        return ['starts_at' => 'date', 'ends_at' => 'date'];
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
     }
 
     public function academicPeriod(): BelongsTo

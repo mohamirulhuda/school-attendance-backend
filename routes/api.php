@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AcademicPeriodController;
 use App\Http\Controllers\Api\ClassroomController;
+use App\Http\Controllers\Api\EnrollmentController;
 use App\Http\Controllers\Api\LearningGroupController;
 use App\Http\Controllers\Api\LearningGroupStudentController;
 use App\Http\Controllers\Api\PeriodController;
@@ -67,5 +68,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/learning-group-memberships', [LearningGroupStudentController::class, 'store']);
     Route::match(['put', 'patch'], '/learning-group-memberships/{learningGroupStudent}', [LearningGroupStudentController::class, 'update']);
     Route::delete('/learning-group-memberships/{learningGroupStudent}', [LearningGroupStudentController::class, 'destroy']);
+
+    Route::get('/enrollments', [EnrollmentController::class, 'index']);
+    Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'show']);
+    Route::post('/enrollments', [EnrollmentController::class, 'store']);
+    Route::match(['put', 'patch'], '/enrollments/{enrollment}', [EnrollmentController::class, 'update']);
 
 });
