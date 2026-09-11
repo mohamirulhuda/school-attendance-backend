@@ -31,6 +31,11 @@ class Student extends Model
         ];
     }
 
+    public function getRouteKeyName(): string
+    {
+        return 'public_id';
+    }
+
     public function enrollments(): HasMany
     {
         return $this->hasMany(Enrollment::class);

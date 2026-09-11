@@ -3,9 +3,11 @@
 use App\Http\Controllers\Api\AcademicPeriodController;
 use App\Http\Controllers\Api\ClassroomController;
 use App\Http\Controllers\Api\PeriodController;
+use App\Http\Controllers\Api\TeacherController;
+use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\TeacherController;
+
 
 
 Route::get('/user', AuthenticatedUserController::class)
@@ -47,5 +49,10 @@ Route::middleware('auth:sanctum')->group(function () {
         '/teachers/{teacher}',
         [TeacherController::class, 'update'],
     );
+
+    Route::get('/students', [StudentController::class, 'index']);
+    Route::get('/students/{student}', [StudentController::class, 'show']);
+    Route::post('/students', [StudentController::class, 'store']);
+    Route::match(['put', 'patch'], '/students/{student}', [StudentController::class, 'update']);
 
 });
