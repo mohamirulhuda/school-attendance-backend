@@ -2,14 +2,13 @@
 
 use App\Http\Controllers\Api\AcademicPeriodController;
 use App\Http\Controllers\Api\ClassroomController;
-use App\Http\Controllers\Api\PeriodController;
-use App\Http\Controllers\Api\TeacherController;
-use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\LearningGroupController;
+use App\Http\Controllers\Api\LearningGroupStudentController;
+use App\Http\Controllers\Api\PeriodController;
+use App\Http\Controllers\Api\StudentController;
+use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Auth\AuthenticatedUserController;
 use Illuminate\Support\Facades\Route;
-
-
 
 Route::get('/user', AuthenticatedUserController::class)
     ->middleware('auth:sanctum');
@@ -62,5 +61,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::match(['put', 'patch'], '/learning-groups/{learningGroup}', [LearningGroupController::class, 'update']);
     Route::get('/learning-groups/{learningGroup}/memberships', [LearningGroupController::class, 'memberships']);
     Route::delete('/learning-groups/{learningGroup}', [LearningGroupController::class, 'destroy']);
+
+    Route::get('/learning-group-memberships', [LearningGroupStudentController::class, 'index']);
+    Route::get('/learning-group-memberships/{learningGroupStudent}', [LearningGroupStudentController::class, 'show']);
+    Route::post('/learning-group-memberships', [LearningGroupStudentController::class, 'store']);
+    Route::match(['put', 'patch'], '/learning-group-memberships/{learningGroupStudent}', [LearningGroupStudentController::class, 'update']);
+    Route::delete('/learning-group-memberships/{learningGroupStudent}', [LearningGroupStudentController::class, 'destroy']);
 
 });
